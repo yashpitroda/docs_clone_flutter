@@ -114,8 +114,9 @@ class GauthProvider {
           );
           switch (res.statusCode) {
             case 200:
-              final newnewuser =
-                  newUser.copyWith(uid: jsonDecode(res.body)['user']["_id"]);
+              final newnewuser = newUser.copyWith(
+                  uid: jsonDecode(res.body)['user']["_id"],
+                  utoken: jsonDecode(res.body)["token"]);
               error = ErrorModel(data: newnewuser, error: null);
               break;
           }

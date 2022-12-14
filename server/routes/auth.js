@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/userModel");
 const jwt=require('jsonwebtoken');
+const authMiddleWare = require("../middlewares/authmiddleware");
 
 // const app=express() //or
 const authRouter=express.Router();
@@ -57,10 +58,11 @@ authRouter.post('/api/signup',async(req,res)=>{
         }
         //if user is alrady in db then do nothing
 
-        const token=jwt.sign({id:user._id});
+        const token=jwt.sign({id:user._id},"passwordKey");
+        console.log(token);
         //now response to client
         // res.status(200).json({user});
-        res.json({user}); //already 200
+        // res.json({user,token}); //already 200
          
     } catch (e) {
         // console.log(error);
@@ -68,8 +70,13 @@ authRouter.post('/api/signup',async(req,res)=>{
     }
 });
 
-authRouter.get("/",auth,async (req,res)=>{
-    
+authRouter.get("/",authMiddleWare,async (req,res)=>{
+    //here auth is middlevare
+    // const user=await User.findOne({_id:req.user});
+    const user=await User.findById(req.user);//req.user has id
+    const token=req.token;
+    console.log(token)
+    res.json({user,token:req.token });
 })
 
 module.exports=authRouter;
